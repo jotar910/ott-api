@@ -11,10 +11,12 @@
   "author": "João Rodrigues",
   "license": "ISC",
   "dependencies": {
+    "compression": "^1.7.4",
     "decko": "^1.2.0",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
+    "helmet": "^6.0.0",
     "nodemon": "^2.0.19",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.9",
