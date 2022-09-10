@@ -1,5 +1,6 @@
 import { IRouter, Router } from 'express';
 import { param, query } from 'express-validator';
+import { useUtilityService } from '../../services/utility';
 import { useValidatorService } from '../../services/validator';
 
 import { IComponentRoutes } from '../helper';
@@ -34,6 +35,7 @@ export class MovieRoutes implements IComponentRoutes<MovieController> {
             '/:movieId',
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
+            useUtilityService().nonNullableJSONResponse,
             this.controller.getMovie
         );
         this.router.put(

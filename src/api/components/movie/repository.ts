@@ -1,7 +1,9 @@
+import { MovieDTO } from '../../dtos/movie/movie';
 import { MovieListDTO } from '../../dtos/movie/movie-list';
 import { Cast } from '../cast/model';
 import { Country } from '../country/model';
 import { IRepository, RepositoryBase } from '../helper';
+import { MovieMapper } from './mapper';
 import { Movie } from './model';
 
 export class MovieDAO {
@@ -26,15 +28,16 @@ export class MovieDAO {
             next_page: Math.min(page + 1, lastPage),
             prev_page: Math.max(page - 1, firstPage),
             total_items: total,
-            items: movies.map((movie) => ({
-                id: movie.id,
-                original_title: movie.title,
-                poster: movie.poster,
-                published: movie.published,
-                created_at: movie.createdAt.toISOString(),
-                updated_at: movie.updatedAt.toISOString()
-            }))
+            items: movies.map(MovieMapper.toListItemDTO)
         };
+    }
+
+    async get(id: number): Promise<MovieDTO | null> {
+        const movie = await this.repo.findOneBy({ id });
+        if (!movie) {
+            return null;
+        }
+        return MovieMapper.toDTO(movie);
     }
 
 }
@@ -73,6 +76,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 title: 'Purple Hearts',
                 year: 2022,
                 published: 1,
+                videoId: '1680608156245230581',
                 poster: 'localhost/images/1',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -85,6 +89,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 title: 'Top Gun: Maverick',
                 year: 2022,
                 published: 0,
+                videoId: '1680608156245230582',
                 poster: 'localhost/images/2',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -97,6 +102,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 title: 'Teen Wolf',
                 year: 2011,
                 published: 1,
+                videoId: '1680608156245230583',
                 poster: 'localhost/images/3',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -109,6 +115,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 title: 'Doctor Strange in the Multiverse of Madness',
                 year: 2022,
                 published: 1,
+                videoId: '1680608156245230584',
                 poster: 'localhost/images/4',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -116,7 +123,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 directors: cast,
                 productionCountries: countries
             }
-        ];
+        ] as Movie[];
 
         for (let i = 0; i < 200; ++i) {
             for (const v of sample) {
@@ -125,7 +132,13 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
         }
     }
 
-    async findAndCount(): Promise<[Movie[], number]> {
-        return [this.data, this.data.length];
+    async findAndCount(options?: { skip: number; take: number }): Promise<[Movie[], number]> {
+        const start = options?.skip || 0;
+        const end = start + (options?.take || 0);
+        return [this.data.slice(start, end), this.data.length];
+    }
+
+    async findOneBy({ id }: { id: number }): Promise<Movie | null> {
+        return this.data.find((movie) => movie.id === id) || null;
     }
 }

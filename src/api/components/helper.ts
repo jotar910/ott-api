@@ -12,32 +12,32 @@ export interface IRepository<T> {
 	find(options?: FindManyOptions<T>): Promise<T[]>;
 	findBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T[]>;
 	findAndCount(options?: FindManyOptions<T>): Promise<[T[], number]>;
-	findOne(options: FindOneOptions<T>): Promise<T>;
-	findOneBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T>;
+	findOne(options: FindOneOptions<T>): Promise<T | null>;
+	findOneBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T | null>;
 	save(entity: T): Promise<T>;
 	delete(entity: T): Promise<T>;
 }
 
 export abstract class RepositoryBase<T> implements IRepository<T> {
-	find(): Promise<T[]> {
-		throw new Error('Method not implemented.');
+	find(options?: FindManyOptions<T>): Promise<T[]> {
+		throw new Error(`Method not implemented (params: ${options}).`);
 	}
-	findBy(): Promise<T[]> {
-		throw new Error('Method not implemented.');
+	findBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T[]> {
+		throw new Error(`Method not implemented (params: ${where}).`);
 	}
-	findAndCount(): Promise<[T[], number]> {
-		throw new Error('Method not implemented.');
+	findAndCount(options?: FindManyOptions<T>): Promise<[T[], number]> {
+		throw new Error(`Method not implemented (params: ${options}).`);
 	}
-	findOne(): Promise<T> {
-		throw new Error('Method not implemented.');
+	findOne(options: FindOneOptions<T>): Promise<T | null> {
+		throw new Error(`Method not implemented (params: ${options}).`);
 	}
-	findOneBy(): Promise<T> {
-		throw new Error('Method not implemented.');
+	findOneBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T | null> {
+		throw new Error(`Method not implemented (params: ${where}).`);
 	}
-	save(): Promise<T> {
-		throw new Error('Method not implemented.');
+	save(entity: T): Promise<T> {
+		throw new Error(`Method not implemented (params: ${entity}).`);
 	}
-	delete(): Promise<T> {
-		throw new Error('Method not implemented.');
+	delete(entity: T): Promise<T> {
+		throw new Error(`Method not implemented (params: ${entity}).`);
 	}
 }

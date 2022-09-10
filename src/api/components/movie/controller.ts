@@ -18,9 +18,9 @@ export class MovieController {
     }
 
     @bind
-    async getMovie(_: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    async getMovie(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
         try {
-            return res.json({});
+            return res.json(await this.dao.get(+req.params.movieId));
         } catch (err) {
             return next(err);
         }
