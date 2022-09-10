@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import { config } from 'dotenv';
 import { createServer, Server as HttpServer } from 'http';
@@ -17,7 +19,7 @@ import { Server } from './api/server';
         // TODO: Connect db
 
         // Init express server
-		logger.info('Initializing Node server...');
+        logger.info('Initializing Node server...');
         const app: express.Application = new Server().app;
         const server: HttpServer = createServer(app);
 
