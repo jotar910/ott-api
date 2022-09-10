@@ -37,9 +37,9 @@ export class MovieController {
     }
 
     @bind
-    async updateMovie(_: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    async updateMovie(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
         try {
-            return res.json({});
+            return res.json(await this.dao.update(+req.params.movieId, MovieMapper.fromCreationToDTO(req.body)));
         } catch (err) {
             return next(err);
         }

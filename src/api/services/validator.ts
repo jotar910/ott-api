@@ -30,11 +30,11 @@ export class ValidatorService {
     }
 
     @bind
-    validateRequestBody<TInterface, TClass extends TInterface & object>(bodyClass: new (data: TInterface) => TClass) {
+    validateRequestBody<TInterface, TClass extends TInterface & object>(bodyClass: new (data: TInterface) => TClass, groups: string[] = ['required']) {
         return async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
             const bodyObj: TClass = new bodyClass(req.body);
 
-            const errors = await validate(bodyObj);
+            const errors = await validate(bodyObj, { always: true, groups });
 
             if (errors.length > 0) {
                 return res.status(400).json({ error: errors });

@@ -33,7 +33,28 @@ export class MovieDAO {
     }
 
     async get(id: number): Promise<MovieDTO | null> {
-        const movie = await this.repo.findOne({
+        const movie = await this._get(id);
+        if (!movie) {
+            return null;
+        }
+        return MovieMapper.toDTO(movie);
+    }
+
+    async create(newMovie: MovieDTO): Promise<MovieDTO> {
+        return MovieMapper.toDTO(await this.repo.save(MovieMapper.toEntity(newMovie)));
+    }
+
+    async update(movieId: number, editMovie: Partial<MovieDTO>): Promise<MovieDTO | null> {
+        const curMovie = await this.repo.findOneBy({id: movieId});
+        if (!curMovie) {
+            return null;
+        }
+        const newMovie: Movie = Object.assign({}, curMovie, MovieMapper.toPartialEntity(editMovie));
+        return MovieMapper.toDTO(await this.repo.save(newMovie));
+    }
+
+    private _get(id: number): Promise<Movie | null> {
+        return this.repo.findOne({
             where: { id },
             relations: {
                 directors: true,
@@ -41,14 +62,6 @@ export class MovieDAO {
                 productionCountries: true
             }
         });
-        if (!movie) {
-            return null;
-        }
-        return MovieMapper.toDTO(movie);
-    }
-
-    async create(newMovie: MovieDTO): Promise<MovieDTO | null> {
-        return MovieMapper.toDTO(await this.repo.save(MovieMapper.toEntity(newMovie)));
     }
 
 }
@@ -153,7 +166,15 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
         return this.data.find((movie) => movie.id === id) || null;
     }
 
+    async findOneBy({ id }: { id: number }): Promise<Movie | null> {
+        return this.data.find((movie) => movie.id === id) || null;
+    }
+
     async save(movie: Movie): Promise<Movie> {
+        if (movie.id) {
+            const curMovie = await this.findOne({ where: { id: movie.id } });
+            return Object.assign(curMovie || {}, movie);
+        }
         movie.id = this.data[this.data.length - 1].id + 1;
         this.data.push(movie);
         return movie;

@@ -7,6 +7,10 @@ import { Movie } from './model'
 
 const UNDEFINED = <T>() => undefined as T;
 
+function ifDefinedRun<T, V>(value: T | undefined, cb: (_: T) => V): V | undefined {
+    return value && cb(value);
+}
+
 export class MovieMapper {
     static toDTO(movie: Movie): MovieDTO {
         return {
@@ -46,6 +50,22 @@ export class MovieMapper {
             createdAt: new Date(movie.created_at),
             updatedAt: new Date(movie.updated_at)
         };
+    }
+
+    static toPartialEntity(movie: Partial<MovieDTO>): Partial<Movie> {
+        const res: Partial<Movie> = {};
+        ifDefinedRun(movie.id, (value) => res.id = value);
+        ifDefinedRun(movie.original_title, (value) => res.title = value);
+        ifDefinedRun(movie.poster, (value) => res.poster = value);
+        ifDefinedRun(movie.published, (value) => res.published = value);
+        ifDefinedRun(movie.video_id, (value) => res.videoId = value);
+        ifDefinedRun(movie.production_year, (value) => res.year = value);
+        ifDefinedRun(movie.cast, (value) => res.directors = value.directors.map(CastMapper.toEntity));
+        ifDefinedRun(movie.cast, (value) => res.actors = value.actors.map(CastMapper.toEntity));
+        ifDefinedRun(movie.production_country, (value) => res.productionCountries = value.map(CountryMapper.toEntity));
+        ifDefinedRun(movie.created_at, (value) => res.createdAt = new Date(value));
+        ifDefinedRun(movie.updated_at, (value) => res.updatedAt = new Date(value));
+        return res;
     }
 
     static fromCreationToDTO(creation: MovieCreationDTO): MovieDTO {

@@ -22,31 +22,38 @@ export class MovieCreationClassDTO implements MovieCreationDTO {
 
     @IsInt()
     @Min(0)
+    @IsOptional({ groups: ['movie/optional']})
     production_year!: number;
 
     @IsNotEmpty()
+    @IsOptional({ groups: ['movie/optional']})
     video_id!: string;
 
     @IsNotEmpty()
     @ArrayMinSize(1)
     @ArrayMaxSize(100)
     @ValidateNested()
+    @IsOptional({ groups: ['movie/optional']})
     production_country!: CountryCreationClassDTO[];
 
     @IsNotEmptyObject()
     @ValidateNested()
+    @IsOptional({ groups: ['movie/optional']})
     cast!: MovieCastCreationClassDTO;
 
     @IsInt()
     @Min(0)
     @Max(1)
+    @IsOptional({ groups: ['movie/optional']})
     published!: number;
 
     @IsNotEmpty()
     @Length(0, 255)
+    @IsOptional({ groups: ['movie/optional']})
     original_title!: string;
 
     @IsNotEmpty()
     @Length(0, 2048)
+    @IsOptional({ groups: ['movie/optional']})
     poster!: string;
 }
