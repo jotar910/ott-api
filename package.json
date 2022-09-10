@@ -11,6 +11,7 @@
   "author": "João Rodrigues",
   "license": "ISC",
   "dependencies": {
+    "class-validator": "^0.13.2",
     "compression": "^1.7.4",
     "decko": "^1.2.0",
     "dotenv": "^16.0.2",

@@ -47,6 +47,10 @@ export class MovieDAO {
         return MovieMapper.toDTO(movie);
     }
 
+    async create(newMovie: MovieDTO): Promise<MovieDTO | null> {
+        return MovieMapper.toDTO(await this.repo.save(MovieMapper.toEntity(newMovie)));
+    }
+
 }
 
 export class MovieMockRepository extends RepositoryBase<Movie> {
@@ -147,5 +151,11 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
 
     async findOne({ where: { id } }: { where: { id: number } }): Promise<Movie | null> {
         return this.data.find((movie) => movie.id === id) || null;
+    }
+
+    async save(movie: Movie): Promise<Movie> {
+        movie.id = this.data[this.data.length - 1].id + 1;
+        this.data.push(movie);
+        return movie;
     }
 }

@@ -1,5 +1,6 @@
 import { IRouter, Router } from 'express';
 import { param, query } from 'express-validator';
+import { MovieCreationClassDTO } from '../../dtos/movie/movie-creation';
 import { useUtilityService } from '../../services/utility';
 import { useValidatorService } from '../../services/validator';
 
@@ -29,6 +30,7 @@ export class MovieRoutes implements IComponentRoutes<MovieController> {
         );
         this.router.post(
             '/',
+            useValidatorService().validateRequestBody(MovieCreationClassDTO),
             this.controller.createMovie
         );
         this.router.get(

@@ -8,4 +8,11 @@ export class CastMapper {
             name: cast.name
         };
     }
+
+    static toEntity(country: CastDTO): Cast {
+        return {
+            id: country.id,
+            name: country.name as string
+        };
+    }
 }

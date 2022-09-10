@@ -1,6 +1,7 @@
 import { bind } from 'decko';
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { validate } from 'class-validator';
 
 export class ValidatorService {
     private static instance: ValidatorService;
@@ -26,6 +27,21 @@ export class ValidatorService {
         }
 
         return next();
+    }
+
+    @bind
+    validateRequestBody<TInterface, TClass extends TInterface & object>(bodyClass: new (data: TInterface) => TClass) {
+        return async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+            const bodyObj: TClass = new bodyClass(req.body);
+
+            const errors = await validate(bodyObj);
+
+            if (errors.length > 0) {
+                return res.status(400).json({ error: errors });
+            }
+
+            return next();
+        };
     }
 }
 
