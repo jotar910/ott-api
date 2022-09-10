@@ -33,7 +33,14 @@ export class MovieDAO {
     }
 
     async get(id: number): Promise<MovieDTO | null> {
-        const movie = await this.repo.findOneBy({ id });
+        const movie = await this.repo.findOne({
+            where: { id },
+            relations: {
+                directors: true,
+                actors: true,
+                productionCountries: true
+            }
+        });
         if (!movie) {
             return null;
         }
@@ -138,7 +145,7 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
         return [this.data.slice(start, end), this.data.length];
     }
 
-    async findOneBy({ id }: { id: number }): Promise<Movie | null> {
+    async findOne({ where: { id } }: { where: { id: number } }): Promise<Movie | null> {
         return this.data.find((movie) => movie.id === id) || null;
     }
 }

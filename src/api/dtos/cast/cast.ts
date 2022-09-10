@@ -1,3 +1,4 @@
 export interface CastDTO {
-    name: string;
+    id: number;
+    name?: string;
 }

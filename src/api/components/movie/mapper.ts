@@ -1,5 +1,7 @@
 import { MovieDTO } from '../../dtos/movie/movie'
 import { MovieListItemDTO } from '../../dtos/movie/movie-list'
+import { CastMapper } from '../cast/mapper'
+import { CountryMapper } from '../country/mapper'
 import { Movie } from './model'
 
 export class MovieMapper {
@@ -9,10 +11,10 @@ export class MovieMapper {
             video_id: movie.videoId,
             production_year: movie.year,
             cast: {
-                directors: movie.directors.map(({ name }) => ({ name })),
-                actors: movie.actors.map(({ name }) => ({ name })),
+                directors: movie.directors.map(CastMapper.toDTO),
+                actors: movie.actors.map(CastMapper.toDTO)
             },
-            production_country: movie.productionCountries.map(({ name }) => ({ name }))
+            production_country: movie.productionCountries.map(CountryMapper.toDTO)
         }
     }
 
