@@ -1,3 +1,4 @@
+import { DeleteResult } from 'typeorm';
 import { MovieDTO } from '../../dtos/movie/movie';
 import { MovieListDTO } from '../../dtos/movie/movie-list';
 import { Cast } from '../cast/model';
@@ -66,7 +67,11 @@ export class MovieDAO {
         if (!curMovie) {
             return null;
         }
-        return MovieMapper.toDTO(await this.repo.delete(curMovie));
+        const result = await this.repo.delete(curMovie);
+        if (result.affected === 0) {
+            return null;
+        }
+        return MovieMapper.toDTO(curMovie);
     }
 
 }
@@ -99,11 +104,10 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
         return movie;
     }
 
-    async delete({ id, account: { id: accountId } }: Movie): Promise<Movie> {
+    async delete({ id, account: { id: accountId } }: Movie): Promise<DeleteResult> {
         const index = this.data.findIndex((movie) => movie.id === id && movie.account.id === accountId);
-        const movie = this.data[index];
         this.data.splice(index, 1);
-        return movie;
+        return { affected: 1 } as DeleteResult;
     }
 
     constructor() {

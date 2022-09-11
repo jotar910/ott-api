@@ -1,5 +1,5 @@
 import { IRouter } from 'express';
-import { FindManyOptions, FindOneOptions, FindOptionsWhere } from 'typeorm';
+import { DeleteResult, FindManyOptions, FindOneOptions, FindOptionsWhere } from 'typeorm';
 
 export interface IComponentRoutes<T> {
 	readonly controller: T;
@@ -15,7 +15,7 @@ export interface IRepository<T> {
 	findOne(options: FindOneOptions<T>): Promise<T | null>;
 	findOneBy(where: FindOptionsWhere<T> | FindOptionsWhere<T>[]): Promise<T | null>;
 	save(entity: T): Promise<T>;
-	delete(entity: T): Promise<T>;
+	delete(entity: T): Promise<DeleteResult>;
 }
 
 export abstract class RepositoryBase<T> implements IRepository<T> {
@@ -37,7 +37,7 @@ export abstract class RepositoryBase<T> implements IRepository<T> {
 	save(entity: T): Promise<T> {
 		throw new Error(`Method not implemented (params: ${entity}).`);
 	}
-	delete(entity: T): Promise<T> {
+	delete(entity: T): Promise<DeleteResult> {
 		throw new Error(`Method not implemented (params: ${entity}).`);
 	}
 }

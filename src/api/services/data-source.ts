@@ -36,4 +36,4 @@ export class DataSourceService {
 }
 
 export const useDataSourceService = DataSourceService.getInstance;
-export const useDataSource = useDataSourceService().dataSource;
+export const useDataSource = () => useDataSourceService().dataSource;
