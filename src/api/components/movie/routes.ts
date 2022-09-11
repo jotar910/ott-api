@@ -52,6 +52,7 @@ export class MovieRoutes implements IComponentRoutes<MovieController> {
             '/:movieId',
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
+            useUtilityService().nonNullableJSONResponse,
             this.controller.deleteMovie
         );
     }

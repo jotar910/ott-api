@@ -33,7 +33,14 @@ export class MovieDAO {
     }
 
     async get(id: number): Promise<MovieDTO | null> {
-        const movie = await this._get(id);
+        const movie = await this.repo.findOne({
+            where: { id },
+            relations: {
+                directors: true,
+                actors: true,
+                productionCountries: true
+            }
+        });
         if (!movie) {
             return null;
         }
@@ -45,7 +52,7 @@ export class MovieDAO {
     }
 
     async update(movieId: number, editMovie: Partial<MovieDTO>): Promise<MovieDTO | null> {
-        const curMovie = await this.repo.findOneBy({id: movieId});
+        const curMovie = await this.repo.findOneBy({ id: movieId });
         if (!curMovie) {
             return null;
         }
@@ -53,15 +60,12 @@ export class MovieDAO {
         return MovieMapper.toDTO(await this.repo.save(newMovie));
     }
 
-    private _get(id: number): Promise<Movie | null> {
-        return this.repo.findOne({
-            where: { id },
-            relations: {
-                directors: true,
-                actors: true,
-                productionCountries: true
-            }
-        });
+    async delete(movieId: number): Promise<MovieDTO | null> {
+        const curMovie = await this.repo.findOneBy({ id: movieId });
+        if (!curMovie) {
+            return null;
+        }
+        return MovieMapper.toDTO(await this.repo.delete(curMovie));
     }
 
 }
@@ -177,6 +181,13 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
         }
         movie.id = this.data[this.data.length - 1].id + 1;
         this.data.push(movie);
+        return movie;
+    }
+
+    async delete({ id }: Movie): Promise<Movie> {
+        const index = this.data.findIndex((movie) => movie.id === id);
+        const movie = this.data[index];
+        this.data.splice(index, 1);
         return movie;
     }
 }

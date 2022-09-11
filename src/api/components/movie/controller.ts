@@ -46,9 +46,9 @@ export class MovieController {
     }
 
     @bind
-    async deleteMovie(_: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    async deleteMovie(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
         try {
-            return res.json({});
+            return res.json(await this.dao.delete(+req.params.movieId));
         } catch (err) {
             return next(err);
         }
