@@ -2,7 +2,7 @@ import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { createLogger, format, transports } from 'winston';
 
-import { env } from './globals';
+import { Env } from './globals';
 
 const logDir = 'logs';
 
@@ -34,7 +34,7 @@ export const logger = createLogger({
 	]
 });
 
-if (env.NODE_ENV !== 'production') {
+if (Env.all.NODE_ENV !== 'production') {
 	logger.add(
 		new transports.Console({
 			format: format.combine(

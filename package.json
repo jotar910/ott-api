@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js --config .nodemon.json",
+    "start-docker": "npm run build && npm start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix"
   },
@@ -23,6 +24,7 @@
     "nodemon": "^2.0.19",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
+    "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.9",
     "winston": "^3.8.2"
@@ -34,6 +36,7 @@
     "@types/node": "^18.7.16",
     "@types/passport": "^1.0.10",
     "@types/passport-jwt": "^3.0.6",
+    "@types/pg": "^8.6.5",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
     "eslint": "^8.23.0",

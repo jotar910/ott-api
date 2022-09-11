@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  server:
+    build: .
+    container_name: ott-api
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+    links:
+      - postgres
+    env_file:
+      - .env
+    command: npm run start-docker
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    cap_add:
+      - SYS_NICE
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db-data:/var/lib/postgresql/data

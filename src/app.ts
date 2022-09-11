@@ -1,22 +1,21 @@
 import 'reflect-metadata';
 
 import express from 'express';
-import { config } from 'dotenv';
 import { createServer, Server as HttpServer } from 'http';
 
-import { env } from './config/globals';
+import { Env } from './config/globals';
 import { logger } from './config/logger';
 
 import { Server } from './api/server';
+import { useDataSourceService } from './api/services/data-source';
 
 
 // Startup
 (async function main() {
     try {
-        // Set env variables from .env file
-        config();
+        // Connect to DB.
+        await useDataSourceService().connect()
 
-        // TODO: Connect db
 
         // Init express server
         logger.info('Initializing Node server...');
@@ -24,10 +23,10 @@ import { Server } from './api/server';
         const server: HttpServer = createServer(app);
 
         // Start express server
-        server.listen(env.NODE_PORT);
+        server.listen(Env.all.NODE_PORT);
 
         server.on('listening', () => {
-            logger.info(`Node server is listening on port ${env.NODE_PORT} in ${env.NODE_ENV} mode`);
+            logger.info(`Node server is listening on port ${Env.all.NODE_PORT} in ${Env.all.NODE_ENV} mode`);
         });
 
         server.on('close', () => {
