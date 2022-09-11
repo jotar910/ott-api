@@ -11,7 +11,8 @@ export class UserDAO {
 	@bind
 	async readById(id: number): Promise<User | null> {
 		return this.repo.findOne({
-			relations: ['userRole'],
+			select: ['id', 'email', 'role', 'account'],
+			relations: ['role', 'account'],
 			where: {
 				active: true,
 				id: id
@@ -54,21 +55,39 @@ export class UserMockRepository extends RepositoryBase<User> {
 				email: 'joana@mail.com',
 				password: hashSync('joana', 10),
 				active: true,
-				role: adminRole
+				role: adminRole,
+				account: {
+					id: 1,
+					firstName: 'Joana',
+					lastName: 'Andrade',
+					movies: []
+				}
 			},
 			{
 				id: 1,
 				email: 'joao@mail.com',
 				password: hashSync('joao', 10),
 				active: true,
-				role: adminRole
+				role: adminRole,
+				account: {
+					id: 1,
+					firstName: 'João',
+					lastName: 'Rodrigues',
+					movies: []
+				}
 			},
 			{
 				id: 1,
 				email: 'tt@mail.com',
 				password: hashSync('tt', 10),
 				active: true,
-				role: userRole
+				role: userRole,
+				account: {
+					id: 1,
+					firstName: 'Test',
+					lastName: 'Test',
+					movies: []
+				}
 			}
 		);
 	}

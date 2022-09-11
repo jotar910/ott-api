@@ -1,3 +1,4 @@
+import { Account } from '../account/model';
 import { UserRole } from '../user-role/model';
 
 export class User {
@@ -6,4 +7,5 @@ export class User {
 	password!: string;
 	active!: boolean;
 	role!: UserRole;
+	account!: Account;
 }
