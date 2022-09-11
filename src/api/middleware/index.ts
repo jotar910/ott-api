@@ -7,8 +7,6 @@ import { useUtilityService } from '../services/utility';
 export function registerMiddleware(router: Router): void {
 	router.use(helmet());
 	router.use(json());
-
-	// TODO: Setup passport strategies
 }
 
 export function registerErrorHandler(router: Router): Response | void {

@@ -1,3 +1,4 @@
+import { compare } from 'bcryptjs';
 import { bind } from 'decko';
 import { NextFunction, Request, Response } from 'express';
 import { logger } from '../../config/logger';
@@ -33,6 +34,19 @@ export class UtilityService {
             return json(value);
         });
         return next();
+    }
+
+    @bind
+    verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            compare(plainPassword, hashedPassword, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
     }
 }
 

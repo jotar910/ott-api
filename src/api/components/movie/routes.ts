@@ -1,26 +1,28 @@
 import { IRouter, Router } from 'express';
 import { param, query } from 'express-validator';
 import { MovieCreationClassDTO } from '../../dtos/movie/movie-creation';
+import { AuthService, useAuthService } from '../../services/auth';
 import { useUtilityService } from '../../services/utility';
 import { useValidatorService } from '../../services/validator';
 
 import { IComponentRoutes } from '../helper';
+import { UserDAO } from '../user/repository';
 import { MovieController } from './controller';
-import { MovieDAO, MovieMockRepository } from './repository';
+import { MovieDAO } from './repository';
 
 export class MovieRoutes implements IComponentRoutes<MovieController> {
     readonly router: IRouter = Router();
-    readonly controller: MovieController = new MovieController(
-        new MovieDAO(
-            new MovieMockRepository()
-        )
-    );
+    readonly controller: MovieController;
+    private readonly authService: AuthService;
 
-    constructor() {
+    constructor(movieDAO: MovieDAO, userDAO: UserDAO) {
+        this.controller = new MovieController(movieDAO);
+        this.authService = useAuthService(userDAO);
         this.initRoutes();
     }
 
     initRoutes(): void {
+        this.router.use(this.authService.isAuthorized);
         this.router.get(
             '/',
             query('page').default(1).isInt({ min: 1 }),
