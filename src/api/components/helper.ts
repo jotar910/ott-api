@@ -5,7 +5,7 @@ export interface IComponentRoutes<T> {
 	readonly controller: T;
 	readonly router: IRouter;
 
-	initRoutes(): void;
+	initRoutes(prefix: string): void;
 }
 
 export interface IRepository<T> {

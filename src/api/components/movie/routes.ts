@@ -1,6 +1,7 @@
 import { IRouter, Router } from 'express';
 import { param, query } from 'express-validator';
 import { MovieCreationClassDTO } from '../../dtos/movie/movie-creation';
+import { useAccountService } from '../../services/account';
 import { AuthService, useAuthService } from '../../services/auth';
 import { useUtilityService } from '../../services/utility';
 import { useValidatorService } from '../../services/validator';
@@ -15,45 +16,58 @@ export class MovieRoutes implements IComponentRoutes<MovieController> {
     readonly controller: MovieController;
     private readonly authService: AuthService;
 
-    constructor(movieDAO: MovieDAO, userDAO: UserDAO) {
+    constructor(prefix: string, movieDAO: MovieDAO, userDAO: UserDAO) {
         this.controller = new MovieController(movieDAO);
         this.authService = useAuthService(userDAO);
-        this.initRoutes();
+        this.initRoutes(prefix);
     }
 
-    initRoutes(): void {
+    initRoutes(prefix: string): void {
         this.router.use(this.authService.isAuthorized);
         this.router.get(
-            '/',
+            `${prefix}/`,
+            param('accountId').isNumeric(),
             query('page').default(1).isInt({ min: 1 }),
             query('limit').default(50).isInt({ min: 0, max: 200 }),
             useValidatorService().validateRequest,
+            useAccountService().isAuthorized('accountId'),
             this.controller.getMovies
         );
         this.router.post(
-            '/',
+            `${prefix}/`,
+            param('accountId').isNumeric(),
+            useValidatorService().validateRequest,
+            useAccountService().isAuthorized('accountId'),
+            useAccountService().hasWriteAccess,
             useValidatorService().validateRequestBody(MovieCreationClassDTO),
             this.controller.createMovie
         );
         this.router.get(
-            '/:movieId',
+            `${prefix}/:movieId`,
+            param('accountId').isNumeric(),
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
+            useAccountService().isAuthorized('accountId'),
             useUtilityService().nonNullableJSONResponse,
             this.controller.getMovie
         );
         this.router.put(
-            '/:movieId',
+            `${prefix}/:movieId`,
+            param('accountId').isNumeric(),
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
+            useAccountService().isAuthorized('accountId'),
+            useAccountService().hasWriteAccess,
             useValidatorService().validateRequestBody(MovieCreationClassDTO, ['movie/optional']),
             useUtilityService().nonNullableJSONResponse,
             this.controller.updateMovie
         );
         this.router.delete(
-            '/:movieId',
+            `${prefix}/:movieId`,
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
+            useAccountService().isAuthorized('accountId'),
+            useAccountService().hasWriteAccess,
             useUtilityService().nonNullableJSONResponse,
             this.controller.deleteMovie
         );

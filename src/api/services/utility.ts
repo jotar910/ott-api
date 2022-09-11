@@ -29,7 +29,7 @@ export class UtilityService {
         res.json = ((value: unknown) => {
             if (!value) {
                 res.status(404);
-                return json({ cause: 'Result is empty' });
+                return json({ error: 'Result not found' });
             }
             return json(value);
         });

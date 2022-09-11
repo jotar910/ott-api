@@ -12,14 +12,14 @@ export class AuthRoutes implements IComponentRoutes<AuthController> {
 	readonly router: Router = Router();
 	readonly controller: AuthController;
 
-	constructor(userDAO: UserDAO) {
+	constructor(prefix: string, userDAO: UserDAO) {
 		this.controller = new AuthController(userDAO);
-		this.initRoutes();
+		this.initRoutes(prefix);
 	}
 
-	initRoutes(): void {
+	initRoutes(prefix: string): void {
 		this.router.post(
-			'/login',
+			`${prefix}/login`,
 			useValidatorService().validateRequestBody(LoginClassDTO),
 			this.controller.loginUser
 		);

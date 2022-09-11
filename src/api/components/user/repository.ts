@@ -64,26 +64,26 @@ export class UserMockRepository extends RepositoryBase<User> {
 				}
 			},
 			{
-				id: 1,
+				id: 2,
 				email: 'joao@mail.com',
 				password: hashSync('joao', 10),
 				active: true,
 				role: adminRole,
 				account: {
-					id: 1,
+					id: 2,
 					firstName: 'João',
 					lastName: 'Rodrigues',
 					movies: []
 				}
 			},
 			{
-				id: 1,
+				id: 3,
 				email: 'tt@mail.com',
 				password: hashSync('tt', 10),
 				active: true,
 				role: userRole,
 				account: {
-					id: 1,
+					id: 3,
 					firstName: 'Test',
 					lastName: 'Test',
 					movies: []

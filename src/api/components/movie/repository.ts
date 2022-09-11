@@ -10,8 +10,9 @@ export class MovieDAO {
 
     constructor(private readonly repo: IRepository<Movie>) { }
 
-    async getList(page: number, limit: number): Promise<MovieListDTO> {
+    async getList(accountId: number, page: number, limit: number): Promise<MovieListDTO> {
         const [movies, total] = await this.repo.findAndCount({
+            where: { account: { id: accountId } },
             skip: (page - 1) * limit,
             take: limit,
             order: {
@@ -32,9 +33,9 @@ export class MovieDAO {
         };
     }
 
-    async get(id: number): Promise<MovieDTO | null> {
+    async get(accountId: number, id: number): Promise<MovieDTO | null> {
         const movie = await this.repo.findOne({
-            where: { id },
+            where: { id, account: { id: accountId } },
             relations: {
                 directors: true,
                 actors: true,
@@ -47,12 +48,12 @@ export class MovieDAO {
         return MovieMapper.toDTO(movie);
     }
 
-    async create(newMovie: MovieDTO): Promise<MovieDTO> {
-        return MovieMapper.toDTO(await this.repo.save(MovieMapper.toEntity(newMovie)));
+    async create(accountId: number, newMovie: MovieDTO): Promise<MovieDTO> {
+        return MovieMapper.toDTO(await this.repo.save(MovieMapper.toEntity(accountId, newMovie)));
     }
 
-    async update(movieId: number, editMovie: Partial<MovieDTO>): Promise<MovieDTO | null> {
-        const curMovie = await this.repo.findOneBy({ id: movieId });
+    async update(accountId: number, movieId: number, editMovie: Partial<MovieDTO>): Promise<MovieDTO | null> {
+        const curMovie = await this.repo.findOneBy({ id: movieId, account: { id: accountId } });
         if (!curMovie) {
             return null;
         }
@@ -60,8 +61,8 @@ export class MovieDAO {
         return MovieMapper.toDTO(await this.repo.save(newMovie));
     }
 
-    async delete(movieId: number): Promise<MovieDTO | null> {
-        const curMovie = await this.repo.findOneBy({ id: movieId });
+    async delete(accountId: number, movieId: number): Promise<MovieDTO | null> {
+        const curMovie = await this.repo.findOneBy({ id: movieId, account: { id: accountId } });
         if (!curMovie) {
             return null;
         }
@@ -72,6 +73,38 @@ export class MovieDAO {
 
 export class MovieMockRepository extends RepositoryBase<Movie> {
     private readonly data: Movie[] = [];
+
+    async findAndCount(options: { skip: number; take: number, where: { account: { id: number } } }): Promise<[Movie[], number]> {
+        const start = options.skip;
+        const end = start + options.take;
+        const data = this.data.filter((movie) => movie.account.id === options.where.account.id);
+        return [data.slice(start, end), data.length];
+    }
+
+    async findOne({ where: { id, account: { id: accountId } } }: { where: { id: number, account: { id: number } } }): Promise<Movie | null> {
+        return this.data.find((movie) => movie.id === id && movie.account.id === accountId) || null;
+    }
+
+    async findOneBy({ id, account: { id: accountId } }: { id: number, account: { id: number } }): Promise<Movie | null> {
+        return this.data.find((movie) => movie.id === id && movie.account.id === accountId) || null;
+    }
+
+    async save(movie: Movie): Promise<Movie> {
+        if (movie.id) {
+            const curMovie = await this.findOne({ where: { id: movie.id, account: { id: movie.account.id } } });
+            return Object.assign(curMovie || {}, movie);
+        }
+        movie.id = this.data[this.data.length - 1].id + 1;
+        this.data.push(movie);
+        return movie;
+    }
+
+    async delete({ id, account: { id: accountId } }: Movie): Promise<Movie> {
+        const index = this.data.findIndex((movie) => movie.id === id && movie.account.id === accountId);
+        const movie = this.data[index];
+        this.data.splice(index, 1);
+        return movie;
+    }
 
     constructor() {
         super();
@@ -110,7 +143,8 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 updatedAt: new Date(),
                 actors: cast,
                 directors: cast,
-                productionCountries: countries
+                productionCountries: countries,
+                account: { id: 1 }
             },
             {
                 id: 2,
@@ -123,7 +157,8 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 updatedAt: new Date(),
                 actors: cast,
                 directors: cast,
-                productionCountries: countries
+                productionCountries: countries,
+                account: { id: 2 }
             },
             {
                 id: 3,
@@ -136,7 +171,8 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 updatedAt: new Date(),
                 actors: cast,
                 directors: cast,
-                productionCountries: countries
+                productionCountries: countries,
+                account: { id: 1 }
             },
             {
                 id: 4,
@@ -149,7 +185,8 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 updatedAt: new Date(),
                 actors: cast,
                 directors: cast,
-                productionCountries: countries
+                productionCountries: countries,
+                account: { id: 2 }
             }
         ] as Movie[];
 
@@ -158,36 +195,5 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 this.data.push(v);
             }
         }
-    }
-
-    async findAndCount(options?: { skip: number; take: number }): Promise<[Movie[], number]> {
-        const start = options?.skip || 0;
-        const end = start + (options?.take || 0);
-        return [this.data.slice(start, end), this.data.length];
-    }
-
-    async findOne({ where: { id } }: { where: { id: number } }): Promise<Movie | null> {
-        return this.data.find((movie) => movie.id === id) || null;
-    }
-
-    async findOneBy({ id }: { id: number }): Promise<Movie | null> {
-        return this.data.find((movie) => movie.id === id) || null;
-    }
-
-    async save(movie: Movie): Promise<Movie> {
-        if (movie.id) {
-            const curMovie = await this.findOne({ where: { id: movie.id } });
-            return Object.assign(curMovie || {}, movie);
-        }
-        movie.id = this.data[this.data.length - 1].id + 1;
-        this.data.push(movie);
-        return movie;
-    }
-
-    async delete({ id }: Movie): Promise<Movie> {
-        const index = this.data.findIndex((movie) => movie.id === id);
-        const movie = this.data[index];
-        this.data.splice(index, 1);
-        return movie;
     }
 }

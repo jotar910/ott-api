@@ -1,3 +1,4 @@
+import { Account } from '../account/model';
 import { Cast } from '../cast/model';
 import { Country } from '../country/model';
 
@@ -13,4 +14,5 @@ export class Movie {
     directors!: Cast[];
     actors!: Cast[];
     productionCountries!: Country[];
+    account!: Account;
 }

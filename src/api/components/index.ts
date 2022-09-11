@@ -9,6 +9,6 @@ export function registerApiRoutes(router: Router, prefix = ''): void {
 	const userDAO = new UserDAO(new UserMockRepository());
 	const movieDAO = new MovieDAO(new MovieMockRepository());
 
-	router.use(`${prefix}/auth`, new AuthRoutes(userDAO).router);
-	router.use(`${prefix}/:accountId/movies`, new MovieRoutes(movieDAO, userDAO).router);
+	router.use(new AuthRoutes(`${prefix}/auth`, userDAO).router);
+	router.use(new MovieRoutes(`${prefix}/:accountId/movies`, movieDAO, userDAO).router);
 }

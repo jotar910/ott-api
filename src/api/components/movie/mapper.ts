@@ -1,6 +1,7 @@
 import { MovieDTO } from '../../dtos/movie/movie'
 import { MovieCreationDTO } from '../../dtos/movie/movie-creation'
 import { MovieListItemDTO } from '../../dtos/movie/movie-list'
+import { Account } from '../account/model'
 import { CastMapper } from '../cast/mapper'
 import { CountryMapper } from '../country/mapper'
 import { Movie } from './model'
@@ -36,7 +37,7 @@ export class MovieMapper {
         }
     }
 
-    static toEntity(movie: MovieDTO): Movie {
+    static toEntity(accountId: number, movie: MovieDTO): Movie {
         return {
             id: movie.id,
             title: movie.original_title,
@@ -48,7 +49,8 @@ export class MovieMapper {
             actors: movie.cast.actors.map(CastMapper.toEntity),
             productionCountries: movie.production_country.map(CountryMapper.toEntity),
             createdAt: new Date(movie.created_at),
-            updatedAt: new Date(movie.updated_at)
+            updatedAt: new Date(movie.updated_at),
+            account: { id: accountId } as Account
         };
     }
 

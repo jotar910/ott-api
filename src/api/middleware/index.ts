@@ -12,10 +12,7 @@ export function registerMiddleware(router: Router): void {
 export function registerErrorHandler(router: Router): Response | void {
 	router.use((err: Error, _: Request, res: Response) => {
 		useUtilityService().handleError(err);
-
-		return res.status(500).json({
-			error: err.message || err,
-			status: 500
-		});
+		res.status(500)
+		res.render('error', { error: err })
 	});
 }
