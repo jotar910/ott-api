@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon app.js --config .nodemon.json",
     "start-docker": "npm run build && npm start",
+    "seed": "ts-node db/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix"
   },

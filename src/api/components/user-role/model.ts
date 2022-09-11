@@ -10,7 +10,8 @@ export class UserRole {
 
     @Column({
         nullable: false,
-        unique: true
+        unique: true,
+        length: 255
     })
     name!: Role;
 }
