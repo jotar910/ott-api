@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { useAuthService } from '../../services/auth';
 import { useUtilityService } from '../../services/utility';
 import { UserMapper } from '../user/mapper';
-import { User } from '../user/model';
+import { Users } from '../user/model';
 import { UserDAO } from '../user/repository';
 
 export class AuthController {
@@ -15,7 +15,7 @@ export class AuthController {
 		try {
 			const { email, password } = req.body;
 
-			const user: User | null = await this.userDAO.readByEmail(email);
+			const user: Users | null = await this.userDAO.readByEmail(email);
 
 			if (!user || !(await useUtilityService().verifyPassword(password, user.password))) {
 				return res.status(401).json({ status: 401, error: 'Wrong email or password' });

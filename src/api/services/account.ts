@@ -1,6 +1,6 @@
 import { bind, memoize } from 'decko';
 import { NextFunction, Request, Response } from 'express';
-import { User } from '../components/user/model';
+import { Users } from '../components/user/model';
 
 export class AccountService {
     private constructor() {
@@ -41,11 +41,11 @@ export class AccountService {
         }
     }
 
-    private getUserFromReq(req: Request): User {
+    private getUserFromReq(req: Request): Users {
         if (!req.user) {
             throw new Error('Unable to identify user');
         }
-        return req.user as User;
+        return req.user as Users;
     }
 
     private getAccountIdFromReq(req: Request, param: string): number {

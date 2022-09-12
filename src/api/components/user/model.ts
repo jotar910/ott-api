@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Account } from '../account/model';
-import { UserRole } from '../user-role/model';
+import { UsersRole } from '../user-role/model';
 
 @Entity()
-export class User {
+export class Users {
 
     @PrimaryGeneratedColumn()
 	id!: number;
@@ -26,8 +26,8 @@ export class User {
     })
 	active!: boolean;
 
-	@ManyToOne(() => UserRole)
-	role!: UserRole;
+	@ManyToOne(() => UsersRole)
+	role!: UsersRole;
 
 	@OneToOne(() => Account)
 	@JoinColumn()

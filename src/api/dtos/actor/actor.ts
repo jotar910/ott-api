@@ -1,4 +1,4 @@
-export interface CastDTO {
+export interface ActorDTO {
     id: number;
     name?: string;
 }

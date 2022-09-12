@@ -1,8 +1,9 @@
 import { DeleteResult } from 'typeorm';
 import { MovieDTO } from '../../dtos/movie/movie';
 import { MovieListDTO } from '../../dtos/movie/movie-list';
-import { Cast } from '../cast/model';
+import { Actor } from '../actor/model';
 import { Country } from '../country/model';
+import { Director } from '../director/model';
 import { IRepository, RepositoryBase } from '../helper';
 import { MovieMapper } from './mapper';
 import { Movie } from './model';
@@ -54,7 +55,13 @@ export class MovieDAO {
     }
 
     async update(accountId: number, movieId: number, editMovie: Partial<MovieDTO>): Promise<MovieDTO | null> {
-        const curMovie = await this.repo.findOneBy({ id: movieId, account: { id: accountId } });
+        const curMovie = await this.repo.findOne({
+            where: {
+                id: movieId,
+                account: { id: accountId }
+            },
+            relations: ['directors', 'actors', 'productionCountries']
+        });
         if (!curMovie) {
             return null;
         }
@@ -62,7 +69,7 @@ export class MovieDAO {
         return MovieMapper.toDTO(await this.repo.save(newMovie));
     }
 
-    async delete(accountId: number, movieId: number): Promise<MovieDTO | null> {
+    async delete(accountId: number, movieId: number): Promise<{ message: string } | null> {
         const curMovie = await this.repo.findOneBy({ id: movieId, account: { id: accountId } });
         if (!curMovie) {
             return null;
@@ -71,7 +78,7 @@ export class MovieDAO {
         if (result.affected === 0) {
             return null;
         }
-        return MovieMapper.toDTO(curMovie);
+        return { message: 'Movie deleted' };
     }
 
 }
@@ -113,7 +120,18 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
     constructor() {
         super();
 
-        const cast: Cast[] = [
+        const directors: Director[] = [
+            {
+                id: 1,
+                name: 'Joana Andrade'
+            },
+            {
+                id: 2,
+                name: 'João Rodrigues'
+            }
+        ];
+
+        const actors: Actor[] = [
             {
                 id: 1,
                 name: 'Joana Andrade'
@@ -143,10 +161,10 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 published: 1,
                 videoId: '1680608156245230581',
                 poster: 'localhost/images/1',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                actors: cast,
-                directors: cast,
+                createdAt: 0,
+                updatedAt: 0,
+                actors: actors,
+                directors: directors,
                 productionCountries: countries,
                 account: { id: 1 }
             },
@@ -157,10 +175,10 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 published: 0,
                 videoId: '1680608156245230582',
                 poster: 'localhost/images/2',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                actors: cast,
-                directors: cast,
+                createdAt: 0,
+                updatedAt: 0,
+                actors: actors,
+                directors: directors,
                 productionCountries: countries,
                 account: { id: 2 }
             },
@@ -171,10 +189,10 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 published: 1,
                 videoId: '1680608156245230583',
                 poster: 'localhost/images/3',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                actors: cast,
-                directors: cast,
+                createdAt: 0,
+                updatedAt: 0,
+                actors: actors,
+                directors: directors,
                 productionCountries: countries,
                 account: { id: 1 }
             },
@@ -185,10 +203,10 @@ export class MovieMockRepository extends RepositoryBase<Movie> {
                 published: 1,
                 videoId: '1680608156245230584',
                 poster: 'localhost/images/4',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                actors: cast,
-                directors: cast,
+                createdAt: 0,
+                updatedAt: 0,
+                actors: actors,
+                directors: directors,
                 productionCountries: countries,
                 account: { id: 2 }
             }

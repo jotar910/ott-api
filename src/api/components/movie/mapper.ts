@@ -2,8 +2,9 @@ import { MovieDTO } from '../../dtos/movie/movie'
 import { MovieCreationDTO } from '../../dtos/movie/movie-creation'
 import { MovieListItemDTO } from '../../dtos/movie/movie-list'
 import { Account } from '../account/model'
-import { CastMapper } from '../cast/mapper'
+import { ActorMapper } from '../actor/mapper'
 import { CountryMapper } from '../country/mapper'
+import { DirectorMapper } from '../director/mapper'
 import { Movie } from './model'
 
 const UNDEFINED = <T>() => undefined as T;
@@ -19,10 +20,10 @@ export class MovieMapper {
             video_id: movie.videoId,
             production_year: movie.year,
             cast: {
-                directors: movie.directors.map(CastMapper.toDTO),
-                actors: movie.actors.map(CastMapper.toDTO)
+                directors: movie.directors && movie.directors.map(DirectorMapper.toDTO),
+                actors: movie.actors && movie.actors.map(ActorMapper.toDTO)
             },
-            production_country: movie.productionCountries.map(CountryMapper.toDTO)
+            production_country: movie.productionCountries && movie.productionCountries.map(CountryMapper.toDTO)
         }
     }
 
@@ -32,8 +33,8 @@ export class MovieMapper {
             original_title: movie.title,
             poster: movie.poster,
             published: movie.published,
-            created_at: movie.createdAt.toISOString(),
-            updated_at: movie.updatedAt.toISOString()
+            created_at: MovieMapper.toISOString(movie.createdAt),
+            updated_at: MovieMapper.toISOString(movie.updatedAt)
         }
     }
 
@@ -45,11 +46,11 @@ export class MovieMapper {
             published: movie.published,
             videoId: movie.video_id,
             year: movie.production_year,
-            directors: movie.cast.directors.map(CastMapper.toEntity),
-            actors: movie.cast.actors.map(CastMapper.toEntity),
+            directors: movie.cast.directors.map(DirectorMapper.toEntity),
+            actors: movie.cast.actors.map(ActorMapper.toEntity),
             productionCountries: movie.production_country.map(CountryMapper.toEntity),
-            createdAt: new Date(movie.created_at),
-            updatedAt: new Date(movie.updated_at),
+            createdAt: MovieMapper.toTimestamp(movie.created_at),
+            updatedAt: MovieMapper.toTimestamp(movie.updated_at),
             account: { id: accountId } as Account
         };
     }
@@ -62,11 +63,11 @@ export class MovieMapper {
         ifDefinedRun(movie.published, (value) => res.published = value);
         ifDefinedRun(movie.video_id, (value) => res.videoId = value);
         ifDefinedRun(movie.production_year, (value) => res.year = value);
-        ifDefinedRun(movie.cast, (value) => res.directors = value.directors.map(CastMapper.toEntity));
-        ifDefinedRun(movie.cast, (value) => res.actors = value.actors.map(CastMapper.toEntity));
+        ifDefinedRun(movie.cast, (value) => res.directors = value.directors.map(DirectorMapper.toEntity));
+        ifDefinedRun(movie.cast, (value) => res.actors = value.actors.map(ActorMapper.toEntity));
         ifDefinedRun(movie.production_country, (value) => res.productionCountries = value.map(CountryMapper.toEntity));
-        ifDefinedRun(movie.created_at, (value) => res.createdAt = new Date(value));
-        ifDefinedRun(movie.updated_at, (value) => res.updatedAt = new Date(value));
+        ifDefinedRun(movie.created_at, (value) => res.createdAt = MovieMapper.toTimestamp(value));
+        ifDefinedRun(movie.updated_at, (value) => res.updatedAt = MovieMapper.toTimestamp(value));
         return res;
     }
 
@@ -78,5 +79,13 @@ export class MovieMapper {
             created_at: today,
             updated_at: today
         };
+    }
+
+    private static toISOString(timestamp: number) {
+        return new Date(+timestamp).toISOString();
+    }
+
+    private static toTimestamp(date: string) {
+        return new Date(date).getTime();
     }
 }

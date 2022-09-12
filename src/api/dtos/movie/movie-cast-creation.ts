@@ -1,27 +1,27 @@
 import { ArrayMaxSize, ArrayMinSize, IsNotEmpty, ValidateNested } from 'class-validator';
-import { CastCreationClassDTO, CastCreationDTO } from '../cast/cast-creation';
+import { RelationIdClassDTO, RelationIdDTO } from '../relation-id';
 
 export interface MovieCastCreationDTO {
-    actors: CastCreationDTO[];
-    directors: CastCreationDTO[];
+    actors: RelationIdDTO[];
+    directors: RelationIdDTO[];
 }
 
 export class MovieCastCreationClassDTO implements MovieCastCreationDTO {
 
     constructor(data: MovieCastCreationDTO) {
-        this.actors = data?.actors && data.actors.map((d) => d && new CastCreationClassDTO(d));
-        this.directors = data?.directors && data.directors.map((d) => d && new CastCreationClassDTO(d));
+        this.actors = data?.actors && data.actors.map((d) => d && new RelationIdClassDTO(d));
+        this.directors = data?.directors && data.directors.map((d) => d && new RelationIdClassDTO(d));
     }
 
     @IsNotEmpty()
     @ArrayMinSize(1)
     @ArrayMaxSize(100)
     @ValidateNested()
-    actors!: CastCreationClassDTO[];
+    actors!: RelationIdClassDTO[];
 
     @IsNotEmpty()
     @ArrayMinSize(1)
     @ArrayMaxSize(100)
     @ValidateNested()
-    directors!: CastCreationClassDTO[];
+    directors!: RelationIdClassDTO[];
 }

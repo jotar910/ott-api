@@ -1,17 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-type Role = 'Admin' | 'User';
-
 @Entity()
-export class UsersRole {
+export class Director {
 
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({
-        nullable: false,
-        unique: true,
+
+	@Column({
+		nullable: false,
         length: 255
-    })
-    name!: Role;
+	})
+    name!: string;
 }

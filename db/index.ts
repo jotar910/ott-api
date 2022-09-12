@@ -28,11 +28,11 @@ const user2Hash = hashSync(pswUser2, 10);
 (async function run() {
 	try {
 		console.log('Running SQL seed...');
-		await client.query('BEGIN')
+		await client.query('BEGIN');
 
 		/* Insert user roles */
 		await client.query(`
-INSERT INTO user_role (id, name)
+INSERT INTO users_role (id, name)
 VALUES (1, 'Admin'), (2, 'User');
 		`);
 
@@ -68,9 +68,24 @@ INSERT INTO users ("email", "password", "active", "roleId", "accountId")
 VALUES ('user2@email.com', $1, TRUE, 2, 3);
 	`, [user2Hash]);
 		console.log(`Password for initial admin account: "${pswUser2}"`);
+		
+		await client.query(`
+INSERT INTO actor ("name")
+VALUES ('Joana Andrade'), ('João Rodrigues');
+	`);
+		
+		await client.query(`
+INSERT INTO director ("name")
+VALUES ('Andrade Joana'), ('Rodrigues João');
+	`);
+		
+		await client.query(`
+INSERT INTO country ("name")
+VALUES ('Portugal'), ('Switzerland');
+	`);
 
 		console.log('SQL seed completed!');
-		await client.query('COMMIT')
+		await client.query('COMMIT');
 	} catch (e) {
 		await client.query('ROLLBACK');
 		throw e;

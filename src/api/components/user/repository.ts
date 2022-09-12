@@ -1,15 +1,15 @@
 import { hashSync } from 'bcryptjs';
 import { bind } from 'decko';
 
-import { User } from './model';
-import { UserRole } from '../user-role/model';
+import { Users } from './model';
+import { UsersRole } from '../user-role/model';
 import { IRepository, RepositoryBase } from '../helper';
 
 export class UserDAO {
-	constructor(private readonly repo: IRepository<User>) { }
+	constructor(private readonly repo: IRepository<Users>) { }
 
 	@bind
-	async readById(id: number): Promise<User | null> {
+	async readById(id: number): Promise<Users | null> {
 		return this.repo.findOne({
 			select: ['id', 'email', 'role', 'account'],
 			relations: ['role', 'account'],
@@ -21,7 +21,7 @@ export class UserDAO {
 	}
 
 	@bind
-	async readByEmail(email: string): Promise<User | null> {
+	async readByEmail(email: string): Promise<Users | null> {
 		return this.repo.findOne({
 			select: ['id', 'email', 'password'],
 			where: {
@@ -32,20 +32,20 @@ export class UserDAO {
 	}
 }
 
-export class UserMockRepository extends RepositoryBase<User> {
-	private readonly data: User[] = [];
+export class UserMockRepository extends RepositoryBase<Users> {
+	private readonly data: Users[] = [];
 
-	async findOne({ where: { id, email } }: { where: { id: number, email: string } }): Promise<User | null> {
+	async findOne({ where: { id, email } }: { where: { id: number, email: string } }): Promise<Users | null> {
 		return this.data.find((user) => user.id === id || user.email === email) || null;
 	}
 
 	constructor() {
 		super();
-		const adminRole: UserRole = {
+		const adminRole: UsersRole = {
 			id: 1,
 			name: 'Admin'
 		};
-		const userRole: UserRole = {
+		const userRole: UsersRole = {
 			id: 2,
 			name: 'User'
 		};

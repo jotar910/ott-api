@@ -1,7 +1,8 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Account } from '../account/model';
-import { Cast } from '../cast/model';
+import { Actor } from '../actor/model';
 import { Country } from '../country/model';
+import { Director } from '../director/model';
 
 @Entity()
 export class Movie {
@@ -37,23 +38,23 @@ export class Movie {
     })
     poster!: string;
 
-	@Column('date', {
+	@Column('bigint', {
 		nullable: false
     })
-    createdAt!: Date;
+    createdAt!: number;
 
-	@Column('date', {
+	@Column('bigint', {
 		nullable: false
     })
-    updatedAt!: Date;
+    updatedAt!: number;
 
-	@ManyToMany(() => Cast)
+	@ManyToMany(() => Director)
     @JoinTable()
-    directors!: Cast[];
+    directors!: Director[];
 
-	@ManyToMany(() => Cast)
+	@ManyToMany(() => Actor)
     @JoinTable()
-    actors!: Cast[];
+    actors!: Actor[];
 
 	@ManyToMany(() => Country)
     @JoinTable()

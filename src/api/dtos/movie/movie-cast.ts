@@ -1,6 +1,7 @@
-import { CastDTO } from '../cast/cast'
+import { ActorDTO } from '../actor/actor';
+import { DirectorDTO } from '../director/director';
 
 export interface MovieCastDTO {
-    actors: CastDTO[];
-    directors: CastDTO[];
+    actors: ActorDTO[];
+    directors: DirectorDTO[];
 }
