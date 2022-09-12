@@ -64,6 +64,7 @@ export class MovieRoutes implements IComponentRoutes<MovieController> {
         );
         this.router.delete(
             `${prefix}/:movieId`,
+            param('accountId').isNumeric(),
             param('movieId').isNumeric(),
             useValidatorService().validateRequest,
             useAccountService().isAuthorized('accountId'),

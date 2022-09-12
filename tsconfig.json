@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"target": "es5",
-		"module": "commonjs",
 		"allowUnreachableCode": false,
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
@@ -24,6 +23,7 @@
 		"./src/**/*"
 	],
 	"exclude": [
-		"dist/**/*"
+		"./dist/**/*",
+		"./db-data/**/*"
 	]
 }
