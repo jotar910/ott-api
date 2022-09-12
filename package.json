@@ -2,10 +2,11 @@
   "name": "ott-api",
   "version": "1.0.0",
   "description": "API for the OTT Challenge",
-  "main": "index.js",
+	"main": "./dist/app.js",
   "scripts": {
     "start": "nodemon app.js --config .nodemon.json",
-    "start-docker": "npm run build && npm start",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "start-docker": "npm run build && node ./dist/app.js",
     "seed": "ts-node db/index.ts",
     "test": "jest src/test",
     "lint": "eslint . --fix"
@@ -33,7 +34,6 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
-    "@types/express-validator": "^3.0.0",
     "@types/jest": "^29.0.1",
     "@types/node": "^18.7.16",
     "@types/passport": "^1.0.10",

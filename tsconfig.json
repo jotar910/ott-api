@@ -1,29 +1,20 @@
 {
 	"compilerOptions": {
-		"allowJs": true,
-		"target": "es5",
-		"allowUnreachableCode": false,
-		"noImplicitReturns": true,
-		"noImplicitAny": true,
-		"outDir": "dist",
-		"strict": true,
+		"target": "es6",
+		"module": "commonjs",
 		"esModuleInterop": true,
-		"resolveJsonModule": true,
 		"moduleResolution": "node",
 		"sourceMap": true,
+		"outDir": "dist",
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"skipLibCheck": true,
+		"skipLibCheck": true
 	},
-	"lib": [
-		"es2016",
-		"dom"
-	],
 	"include": [
-		"./src/**/*"
+		"src"
 	],
 	"exclude": [
-		"./dist/**/*",
-		"./db-data/**/*"
+		"node_modules",
+		"src/test"
 	]
 }

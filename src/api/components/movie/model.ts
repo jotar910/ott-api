@@ -38,12 +38,12 @@ export class Movie {
     })
     poster!: string;
 
-	@Column('bigint', {
+	@Column('timestamp with time zone', {
 		nullable: false
     })
     createdAt!: number;
 
-	@Column('bigint', {
+	@Column('timestamp with time zone', {
 		nullable: false
     })
     updatedAt!: number;

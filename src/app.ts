@@ -14,7 +14,7 @@ import { useDataSourceService } from './api/services/data-source';
 (async function main() {
     try {
         // Connect to DB.
-        await useDataSourceService().connect()
+        await useDataSourceService().connect();
 
 
         // Init express server
@@ -34,6 +34,7 @@ import { useDataSourceService } from './api/services/data-source';
             logger.info('Node server closed');
         });
     } catch (err) {
+        logger.info('Node server failed! Check logs');
         logger.error(err);
     }
 })();

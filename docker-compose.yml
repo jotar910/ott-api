@@ -1,26 +1,47 @@
-version: '3'
+version: '3.9'
 
 services:
   server:
     build: .
     container_name: ott-api
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - 3000:3000
     links:
       - postgres
     env_file:
-      - .env
+      - .env.docker
     command: npm run start-docker
+    networks:
+      ott:
+        ipv4_address: 10.7.0.2
+
   postgres:
     image: postgres
     restart: always
     env_file:
-      - .env
+      - .env.docker
     cap_add:
       - SYS_NICE
     ports:
       - 5432:5432
     volumes:
       - ./db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ott_movies"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      ott:
+        ipv4_address: 10.7.0.3
+
+networks:
+  ott:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.7.0.0/16
+          gateway: 10.7.0.1

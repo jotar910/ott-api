@@ -1,8 +1,15 @@
 import { hashSync } from 'bcryptjs';
+import { readFileSync } from 'fs';
 import { config } from 'dotenv';
 import { Client } from 'pg';
 
+// Config .env variables.
 config();
+
+// Read movies CSV file
+const seedQuery = readFileSync('db/seed.sql', {
+	encoding: 'utf-8'
+});
 
 // Connect to database
 const configs = {
@@ -32,60 +39,47 @@ const user2Hash = hashSync(pswUser2, 10);
 
 		/* Insert user roles */
 		await client.query(`
-INSERT INTO users_role (id, name)
-VALUES (1, 'Admin'), (2, 'User');
-		`);
+				INSERT INTO users_role (id, name)
+				VALUES (1, 'Admin'), (2, 'User');
+					`);
 
 		/* Insert admin account */
 		await client.query(`
-INSERT INTO account ("id", "firstName", "lastName")
-VALUES (1, 'Admin', 'Admin');
-	`);
+				INSERT INTO account ("id", "firstName", "lastName")
+				VALUES (1, 'Admin', 'Admin');
+					`);
 		await client.query(`
-INSERT INTO users ("email", "password", "active", "roleId", "accountId")
-VALUES ('admin@email.com', $1, TRUE, 1, 1);
-	`, [adminHash]);
+				INSERT INTO users ("email", "password", "active", "roleId", "accountId")
+				VALUES ('admin@email.com', $1, TRUE, 1, 1);
+					`, [adminHash]);
 		console.log(`Password for initial admin account: "${pswAdmin}"`);
 
 		/* Insert user account 1 */
 		await client.query(`
-INSERT INTO account ("id", "firstName", "lastName")
-VALUES (2, 'User', '1');
-	`);
+				INSERT INTO account ("id", "firstName", "lastName")
+				VALUES (2, 'User', '1');
+					`);
 		await client.query(`
-INSERT INTO users ("email", "password", "active", "roleId", "accountId")
-VALUES ('user1@email.com', $1, TRUE, 2, 2);
-	`, [user1Hash]);
+				INSERT INTO users ("email", "password", "active", "roleId", "accountId")
+				VALUES ('user1@email.com', $1, TRUE, 2, 2);
+					`, [user1Hash]);
 		console.log(`Password for initial admin account: "${pswUser1}"`);
 
 		/* Insert user account 2 */
 		await client.query(`
-INSERT INTO account ("id", "firstName", "lastName")
-VALUES (3, 'User', '2');
-	`);
+				INSERT INTO account ("id", "firstName", "lastName")
+				VALUES (3, 'User', '2');
+					`);
 		await client.query(`
-INSERT INTO users ("email", "password", "active", "roleId", "accountId")
-VALUES ('user2@email.com', $1, TRUE, 2, 3);
-	`, [user2Hash]);
+				INSERT INTO users ("email", "password", "active", "roleId", "accountId")
+				VALUES ('user2@email.com', $1, TRUE, 2, 3);
+					`, [user2Hash]);
 		console.log(`Password for initial admin account: "${pswUser2}"`);
 		
-		await client.query(`
-INSERT INTO actor ("name")
-VALUES ('Joana Andrade'), ('João Rodrigues');
-	`);
-		
-		await client.query(`
-INSERT INTO director ("name")
-VALUES ('Andrade Joana'), ('Rodrigues João');
-	`);
-		
-		await client.query(`
-INSERT INTO country ("name")
-VALUES ('Portugal'), ('Switzerland');
-	`);
+		await client.query(seedQuery);
 
-		console.log('SQL seed completed!');
 		await client.query('COMMIT');
+		console.log('SQL seed completed!');
 	} catch (e) {
 		await client.query('ROLLBACK');
 		throw e;
