@@ -63,7 +63,7 @@ const user2Hash = hashSync(pswUser2, 10);
 				INSERT INTO users ("email", "password", "active", "roleId", "accountId")
 				VALUES ('user1@email.com', $1, TRUE, 2, 2);
 					`, [user1Hash]);
-		console.log(`Password for initial admin account: "${pswUser1}"`);
+		console.log(`Password for initial user 1 account: "${pswUser1}"`);
 
 		/* Insert user account 2 */
 		await client.query(`
@@ -74,7 +74,7 @@ const user2Hash = hashSync(pswUser2, 10);
 				INSERT INTO users ("email", "password", "active", "roleId", "accountId")
 				VALUES ('user2@email.com', $1, TRUE, 2, 3);
 					`, [user2Hash]);
-		console.log(`Password for initial admin account: "${pswUser2}"`);
+		console.log(`Password for initial user 2 account: "${pswUser2}"`);
 		
 		await client.query(seedQuery);
 
